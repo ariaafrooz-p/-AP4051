@@ -49,8 +49,23 @@ been run on a real sound card. Which clip goes with which action is my reading o
 (`tools/build_audio.py`) is my own choice: the originals are authored very quietly and the real game boosts them in its audio mixer.
 
 ## Test
-    python tests/test_core.py         # headless: geometry, snapping, scoring, full auto-played games
-    python tests/preview.py outdir    # needs Pillow; renders PNG screenshots of the game scenes
+    python -m unittest                        # the unittest suite (142 tests, about 6 s), run from the project folder
+    python -m unittest discover -s tests -v   # same, one line per test
+    python -m unittest tests.test_logic.ScoringTests -v     # one class (or tests.test_logic, tests.test_features, ...)
+    python tests/test_core.py                 # the older all-in-one script with plain asserts (same game, fewer details)
+    python tests/preview.py outdir            # needs Pillow; renders PNG screenshots of the game scenes
+
+The unittest suite needs no display and no sound card (pixel checks are skipped if numpy / Pillow are missing):
+- `tests/test_logic.py`    data files, geometry, scoring rules, puzzle rules (snapping, rotation, hints, layout), the game loop
+                           and that every drawing primitive is well formed in every screen
+- `tests/test_features.py` pause menu, intro pan (including that its last frame equals the board screen pixel for pixel),
+                           hover / pressed effects, held piece and dotted hint, the sound events the game emits
+- `tests/test_audio.py`    clips (format, length, loudness), event-to-clip mapping, mute, music scheduling, and with
+                           `unittest.mock` the exact calls the Windows MCI, pygame and system-player backends would make
+- `tests/helpers.py`       shared helpers (optimal-play bot that drives the game through its mouse/key API, fake backend)
+I checked that the tests have teeth by breaking the code ten different ways (halved penalty, wrong hover colour, snapping
+without orientation, Esc not skipping the intro, restart keeping the score, clock running while paused, MCI not rewinding,
+music repeating a clip, mute still playing, a missing sound event): every one made at least one test fail.
 
 ## Layout
 - `core.py`   all game logic and the scene description (no UI imports)
@@ -65,6 +80,7 @@ been run on a real sound card. Which clip goes with which action is my reading o
 - `tools/build_intro.py`        builds the intro strip from the intro screenshots (needs opencv-python + numpy)
 - `audio.py`                   sound backends + event-to-clip logic;  `data/audio/`  the 18 clips converted to WAV
 - `tools/build_audio.py`        converts + level-matches the exported .m4a clips (needs ffmpeg)
+- `tests/`                     unittest suite + helpers + `preview.py` (see Test above)
 - `tools/extract_outlines.py`   rebuilds the two files above from the exported sprite SVGs
 - `data/silhouettes_csv.txt`    5,152 puzzles, `level,Piece:rotation:x:y;...`
 
