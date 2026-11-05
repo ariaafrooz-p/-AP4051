@@ -1,10 +1,9 @@
 from decimal import Decimal
 
 from driver import Driver
-from order import Order
-from validation import (CATEGORIES, DRIVER_STATUSES, ENDPOINTS, ORDER_STATUSES,
-                        manhattan, validate_choice, validate_int,
-                        validate_position, validate_username)
+from order import (CATEGORIES, DRIVER_STATUSES, ENDPOINTS, ORDER_STATUSES, Order,
+                   manhattan, validate_choice, validate_int,
+                   validate_position, validate_username)
 
 _DRIVER_SHARE = Decimal("0.8")
 _COMPANY_SHARE = Decimal("0.2")

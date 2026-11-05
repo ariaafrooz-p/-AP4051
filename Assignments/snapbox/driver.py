@@ -1,7 +1,7 @@
 from decimal import Decimal
 
-from validation import (CATEGORIES, validate_choice, validate_position,
-                        validate_username)
+from order import (CATEGORIES, validate_choice, validate_position,
+                   validate_username)
 
 
 class Driver:
